@@ -54,8 +54,12 @@ section.task-list {
         padding: 14px;
         transition: filter 0.2s;
 
-        &:hover {
+        &:not(:disabled):hover {
           filter: brightness(0.95);
+        }
+
+        &:disabled {
+          cursor: not-allowed;
         }
       }
     }

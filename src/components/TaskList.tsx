@@ -17,28 +17,36 @@ export function TaskList() {
   console.log(newTaskTitle)
 
   function handleCreateNewTask() {
-    // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
-    if(newTaskTitle.length === 0) return console.log('vazio...')
+    if(!newTaskTitle) return
     
-    setTasks((prev) => {
-      const task: Task = {
-        id: (newTaskTitle.length * Math.random()) + 1,
-        title: newTaskTitle,
-        isComplete: false
-      }
-      
-      setNewTaskTitle('')
-      return [...prev, task]
-    })
+    const task: Task = {
+      id: (newTaskTitle.length * Math.random()) + 1,
+      title: newTaskTitle,
+      isComplete: false
+    }
+
+    setTasks((prev) => [...prev, task])
+    setNewTaskTitle('')
   }
 
   function handleToggleTaskCompletion(id: number) {
-    // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const taskCompleted = tasks.map<Task>((task) => task.id === id ? {
+      ...task,
+      isComplete: !task.isComplete
+    } : task)
+
+    setTasks(taskCompleted)
   }
 
   function handleRemoveTask(id: number) {
-    // Remova uma task da listagem pelo ID
+    const newTask = tasks.filter((task) => task.id !== id)
+
+    setTasks(newTask)
   }
+
+  const disableButton = newTaskTitle.length === 0 ? true : false
+  console.log(disableButton);
+  
 
   return (
     <section className="task-list container">
@@ -52,7 +60,7 @@ export function TaskList() {
             onChange={(e) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
           />
-          <button type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
+          <button type="submit" disabled={disableButton} data-testid="add-task-button" onClick={handleCreateNewTask}>
             <FiCheckSquare size={16} color="#fff"/>
           </button>
         </div>
@@ -75,7 +83,11 @@ export function TaskList() {
                 <p>{task.title}</p>
               </div>
 
-              <button type="button" data-testid="remove-task-button" onClick={() => handleRemoveTask(task.id)}>
+              <button 
+                type="button" 
+                data-testid="remove-task-button" 
+                onClick={() => handleRemoveTask(task.id)}
+              >
                 <FiTrash size={16}/>
               </button>
             </li>
